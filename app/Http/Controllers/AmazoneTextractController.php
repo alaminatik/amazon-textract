@@ -21,6 +21,8 @@ class AmazoneTextractController extends Controller
         
       // For aws S3
 
+        //   require 'vendor/autoload.php';
+
         // $client = new TextractClient([
         //     'version' => 'latest',
         //     'region' => env('AWS_DEFAULT_REGION'),
