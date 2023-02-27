@@ -51,39 +51,74 @@ class AmazoneTextractController extends Controller
         // For local PC
 
         
-        require 'E:\XAMPP-7.4\htdocs\amazontextract\vendor\autoload.php';
-     
- 
+        // require 'D:\xampp-php-7.4\htdocs\amazon-textract\vendor\autoload.php';
+        
+        
         $textractClient = new TextractClient([
             'version' => 'latest',
             'region' => 'ap-south-1', // pass your region
             'credentials' => [
-                'key'    => 'AKIAW4SQVCR7MNCSMI4R',
-                'secret' => 'nQF0pWNQlZ5Co1cmkX4fy7xPTWDEm2w3GHhROWNy'
-            ]
+                'key'    => 'AKIAW4SQVCR7HUJ63EWV',
+                'secret' => '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'
+                ]
+               
         ]);
 
+        // return 'test ok';
         
         
         try {
             // return 'test ok';
-            $result = $textractClient->detectDocumentText([
+            $result = $textractClient->analyzeDocument([
                 'Document' => [
-                    'Bytes' => file_get_contents(getcwd().'/2.png'),
-                ]
+                    'S3Object' => [
+                        'Bucket' => 'bdtax-doc',
+                        'Name' => 'Screenshot_1.png',
+                    ],
+                ],
+                'FeatureTypes' => ['TABLES', 'FORMS'],
             ]);
 
-            
+            echo '<pre>';
+            print_r($result);
+            die();
 
-            foreach ($result->get('Blocks') as $block) {
-                if ($block['BlockType'] != 'WORD') continue;
-                 
-                echo $block['Text']." ";
+            foreach ($result['Blocks'] as $block) {
+                if ($block['BlockType'] == 'KEY_VALUE_SET') {
+                    // Extract the label and value
+                    $label = '';
+                    $value = '';
+                    if(!isset($block['Relationships'])){
+                        continue;  
+                    }
+                    foreach ($block['Relationships'] as $relationship) {
+                        if ($relationship['Type'] == 'CHILD') {
+                            foreach ($relationship['Ids'] as $childId) {
+                                if(!isset($result['Blocks'][$childId])){
+                                 continue;   
+                                }
+                                $childBlock = $result['Blocks'][$childId];
+                               
+                                if ($childBlock['BlockType'] == 'WORD') {
+                                    // This is a label
+                                    $label .= $childBlock['Text'] . ' ';
+                                } elseif ($childBlock['BlockType'] == 'SELECTION_ELEMENT') {
+                                    // This is a checkbox
+                                    $value .= ($childBlock['SelectionStatus'] == 'SELECTED') ? 'Yes' : 'No';
+                                } else {
+                                    // This is a value
+                                    $value .= $childBlock['Text'] . ' ';
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Print out the label and value
+                    echo $label . ': ' . $value . '<br>';
+                }
             }
-
-            // echo '<pre>';
-            // print_r($block['Text']);
-            // die();
+            
+           
 
         } catch (Aws\Textract\Exception\TextractException $e) {
             // output error message if fails
