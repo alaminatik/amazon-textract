@@ -79,18 +79,18 @@ class AmazoneTextractController extends Controller
                 'FeatureTypes' => ['TABLES', 'FORMS'],
             ]);
 
-            echo '<pre>';
-            print_r($result);
-            die();
+            // echo '<pre>';
+            // print_r($result);
+            // die();
 
             foreach ($result['Blocks'] as $block) {
                 if ($block['BlockType'] == 'KEY_VALUE_SET') {
                     // Extract the label and value
                     $label = '';
                     $value = '';
-                    if(!isset($block['Relationships'])){
-                        continue;  
-                    }
+                    // if(!isset($block['Relationships'])){
+                    //     continue;  
+                    // }
                     foreach ($block['Relationships'] as $relationship) {
                         if ($relationship['Type'] == 'CHILD') {
                             foreach ($relationship['Ids'] as $childId) {
