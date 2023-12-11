@@ -131,7 +131,7 @@ class AmazoneTextractController extends Controller
                 'credentials' => $provider
             ]);
             */
-
+// return 'ok';
             $client = new TextractClient([
                 'region' => 'ap-south-1',
                 'version' => '2018-06-27',
@@ -141,7 +141,7 @@ class AmazoneTextractController extends Controller
                 ]
             ]);
 
-            return $client;
+            // return $client;
 
             // The file in this project.
             $filename = "11.jpg";
