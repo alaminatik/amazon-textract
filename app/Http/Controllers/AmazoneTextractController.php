@@ -144,7 +144,7 @@ class AmazoneTextractController extends Controller
             // return $client;
 
             // The file in this project.
-            $filename = "11.jpg";
+            $filename = "doc_2.pdf";
 
             $file = fopen($filename, "rb");
             $contents = fread($file, filesize($filename));
@@ -166,10 +166,18 @@ class AmazoneTextractController extends Controller
                     $blockType = $value['BlockType'];
                     if (isset($value['Text']) && $value['Text']) {
                         $text = $value['Text'];
-                        if ($blockType == 'WORD') {
-                            echo "Word: ". print_r($text, true) . "\n";
-                        } else if ($blockType == 'LINE') {
-                            echo "Line: ". print_r($text, true) . "\n";
+                        // if ($blockType == 'WORD') {
+                        //     echo "Word: ". print_r($text, true) . "\n";
+                        // } else 
+                        
+                        if ($blockType == 'LINE') {
+                            $paragraph[] = $text;
+                            $concatenatedText = implode(" ", $paragraph);
+                            $cont = $text;
+                            echo '<pre>';
+                            print_r($concatenatedText);
+                            // exit;
+                            // echo "Line: ". print_r($text, true) . "\n";
                         }
                     }
                 }
