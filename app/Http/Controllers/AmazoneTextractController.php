@@ -9,6 +9,10 @@ use Aws\Textract\TextractClient;
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
+// require './aws-autoloader.php';
+
+use Aws\Credentials\CredentialProvider;
+
 class AmazoneTextractController extends Controller
 {
     /**
@@ -52,69 +56,122 @@ class AmazoneTextractController extends Controller
 
         
         // require 'D:\xampp-php-7.4\htdocs\amazon-textract\vendor\autoload.php';
+        // return 'test ok';
         
-         // return 'test ok';
-        $textractClient = new TextractClient([
-            'version' => 'latest',
-            'region' => 'ap-south-1', // pass your region
-            'credentials' => [
-                'key'    => 'AKIAW4SQVCR7HUJ63EWV',
-                'secret' => 'z8cGG4tNJDdCgy4g9XeDvuBbnJHxgd0JHkgkZz5T'
-                ]
+        // $textractClient = new TextractClient([
+        //     'version' => 'latest',
+        //     'region' => 'ap-south-1', // pass your region
+        //     'credentials' => [
+        //         'key'    => 'AKIAW4SQVCR7GUO5AIK7',
+        //         'secret' => '1sS3HKmOxEgz6T4leZbD2SpoiJ0PBEd6JN0Leh+u'
+        //         ]
                
-        ]);
+        // ]);
 
         // return 'test ok';
         
         
         try {
             // return 'test ok';
-            $result = $textractClient->analyzeDocument([
-                'Document' => [
-                    'S3Object' => [
-                        'Bucket' => 'bdtax-doc',
-                        'Name' => 'Screenshot_1.png',
-                    ],
-                ],
-                'FeatureTypes' => ['TABLES', 'FORMS'],
-            ]);
+            // $result = $textractClient->analyzeDocument([
+            //     'Document' => [
+            //         'S3Object' => [
+            //             'Bucket' => 'bdtax-doc',
+            //             'Name' => 'Screenshot_1.png',
+            //         ],
+            //     ],
+            //     'FeatureTypes' => ['TABLES', 'FORMS'],
+            // ]);
 
             // echo '<pre>';
             // print_r($result);
             // die();
 
-            foreach ($result['Blocks'] as $block) {
-                if ($block['BlockType'] == 'KEY_VALUE_SET') {
-                    // Extract the label and value
-                    $label = '';
-                    $value = '';
-                    // if(!isset($block['Relationships'])){
-                    //     continue;  
-                    // }
-                    foreach ($block['Relationships'] as $relationship) {
-                        if ($relationship['Type'] == 'CHILD') {
-                            foreach ($relationship['Ids'] as $childId) {
-                                if(!isset($result['Blocks'][$childId])){
-                                 continue;   
-                                }
-                                $childBlock = $result['Blocks'][$childId];
+            // foreach ($result['Blocks'] as $block) {
+            //     if ($block['BlockType'] == 'KEY_VALUE_SET') {
+            //         // Extract the label and value
+            //         $label = '';
+            //         $value = '';
+            //         // if(!isset($block['Relationships'])){
+            //         //     continue;  
+            //         // }
+            //         foreach ($block['Relationships'] as $relationship) {
+            //             if ($relationship['Type'] == 'CHILD') {
+            //                 foreach ($relationship['Ids'] as $childId) {
+            //                     if(!isset($result['Blocks'][$childId])){
+            //                      continue;   
+            //                     }
+            //                     $childBlock = $result['Blocks'][$childId];
                                
-                                if ($childBlock['BlockType'] == 'WORD') {
-                                    // This is a label
-                                    $label .= $childBlock['Text'] . ' ';
-                                } elseif ($childBlock['BlockType'] == 'SELECTION_ELEMENT') {
-                                    // This is a checkbox
-                                    $value .= ($childBlock['SelectionStatus'] == 'SELECTED') ? 'Yes' : 'No';
-                                } else {
-                                    // This is a value
-                                    $value .= $childBlock['Text'] . ' ';
-                                }
-                            }
+            //                     if ($childBlock['BlockType'] == 'WORD') {
+            //                         // This is a label
+            //                         $label .= $childBlock['Text'] . ' ';
+            //                     } elseif ($childBlock['BlockType'] == 'SELECTION_ELEMENT') {
+            //                         // This is a checkbox
+            //                         $value .= ($childBlock['SelectionStatus'] == 'SELECTED') ? 'Yes' : 'No';
+            //                     } else {
+            //                         // This is a value
+            //                         $value .= $childBlock['Text'] . ' ';
+            //                     }
+            //                 }
+            //             }
+            //         }
+                    
+            //         // Print out the label and value
+            //         echo $label . ': ' . $value . '<br>';
+            //     }
+            // }
+
+            /*
+            $provider = CredentialProvider::env();
+            $client = new TextractClient([
+                'profile' => 'TextractUser',
+                'region' => 'us-west-2',
+                'version' => '2018-06-27',
+                'credentials' => $provider
+            ]);
+            */
+// return 'ok';
+            $client = new TextractClient([
+                'region' => 'ap-south-1',
+                'version' => '2018-06-27',
+                'credentials' => [
+                    'key'    => 'AKIAW4SQVCR7GUO5AIK7',
+                    'secret' => '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'
+                ]
+            ]);
+
+            // return $client;
+
+            // The file in this project.
+            $filename = "11.jpg";
+
+            $file = fopen($filename, "rb");
+            $contents = fread($file, filesize($filename));
+            fclose($file);
+
+            $options = [
+                'Document' => [
+                    'Bytes' => $contents
+                ],
+                'FeatureTypes' => ['FORMS'], // REQUIRED
+            ];
+            $result = $client->analyzeDocument($options);
+            // If debugging:
+            // echo print_r($result, true);
+            $blocks = $result['Blocks'];
+            // Loop through all the blocks:
+            foreach ($blocks as $key => $value) {
+                if (isset($value['BlockType']) && $value['BlockType']) {
+                    $blockType = $value['BlockType'];
+                    if (isset($value['Text']) && $value['Text']) {
+                        $text = $value['Text'];
+                        if ($blockType == 'WORD') {
+                            echo "Word: ". print_r($text, true) . "\n";
+                        } else if ($blockType == 'LINE') {
+                            echo "Line: ". print_r($text, true) . "\n";
                         }
                     }
-                    
-                    // Print out the label and value
-                    echo $label . ': ' . $value . '<br>';
                 }
             }
             
