@@ -53,7 +53,7 @@ class AmazoneTextractController extends Controller
         
         // require 'D:\xampp-php-7.4\htdocs\amazon-textract\vendor\autoload.php';
         
-        
+         // return 'test ok';
         $textractClient = new TextractClient([
             'version' => 'latest',
             'region' => 'ap-south-1', // pass your region
