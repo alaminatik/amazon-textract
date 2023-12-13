@@ -62,8 +62,8 @@ class AmazoneTextractController extends Controller
         //     'version' => 'latest',
         //     'region' => 'ap-south-1', // pass your region
         //     'credentials' => [
-        //         'key'    => 'AKIAW4SQVCR7GUO5AIK7',
-        //         'secret' => '1sS3HKmOxEgz6T4leZbD2SpoiJ0PBEd6JN0Leh+u'
+        //         'key'    => env('AWS_ACCESS_KEY_ID'),
+        //         'secret' => env('AWS_SECRET_ACCESS_KEY')
         //         ]
                
         // ]);
@@ -136,8 +136,8 @@ class AmazoneTextractController extends Controller
                 'region' => 'ap-south-1',
                 'version' => '2018-06-27',
                 'credentials' => [
-                    'key'    => '',
-                    'secret' => ''
+                    'key'    => env('AWS_ACCESS_KEY_ID'),
+                    'secret' => env('AWS_SECRET_ACCESS_KEY')
                 ]
             ]);
 
