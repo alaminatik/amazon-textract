@@ -144,7 +144,7 @@ class AmazoneTextractController extends Controller
             // return $client;
 
             // The file in this project.
-            $filename = "doc_2.pdf";
+            $filename = "doc10.pdf";
 
             $file = fopen($filename, "rb");
             $contents = fread($file, filesize($filename));
@@ -172,16 +172,18 @@ class AmazoneTextractController extends Controller
                         
                         if ($blockType == 'LINE') {
                             $paragraph[] = $text;
-                            $concatenatedText = implode(" ", $paragraph);
-                            $cont = $text;
-                            echo '<pre>';
-                            print_r($concatenatedText);
+                            
                             // exit;
                             // echo "Line: ". print_r($text, true) . "\n";
                         }
                     }
                 }
             }
+            
+            $concatenatedText = implode(" ", $paragraph);
+            $cont = $text;
+            // echo '<pre>';
+            print_r($concatenatedText);
             
            
 
