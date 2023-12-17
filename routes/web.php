@@ -18,4 +18,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::match(array('GET','POST'),'aws/test', [AmazoneTextractController::class,'index']);
+Route::match(array('GET','POST'),'aws/fileUpload', [AmazoneTextractController::class,'fileUpload'])->name('aws.fileUpload');
+Route::match(array('GET','POST'),'aws/extract', [AmazoneTextractController::class,'index'])->name('aws.extract');

@@ -20,7 +20,12 @@ class AmazoneTextractController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function fileUpload()
+    {
+        return view('fileupload');
+    }
+
+    public function index(Request $request)
     {
         
       // For aws S3
@@ -132,6 +137,22 @@ class AmazoneTextractController extends Controller
             ]);
             */
 // return 'ok';
+           
+
+            // return $client;
+
+            $request->validate([
+
+                'file' => 'required|mimes:pdf,xlx,csv,jpg,png|max:2048',
+    
+            ]);
+    
+            $filename = time().'.'.$request->file->extension();  
+            $request->file->move(public_path('/'), $filename);
+    
+            // return back()->with('success','You have successfully upload file.')->with('file',$fileName);
+    
+       
             $client = new TextractClient([
                 'region' => 'ap-south-1',
                 'version' => '2018-06-27',
@@ -141,10 +162,8 @@ class AmazoneTextractController extends Controller
                 ]
             ]);
 
-            // return $client;
 
             // The file in this project.
-            $filename = "doc10.pdf";
 
             $file = fopen($filename, "rb");
             $contents = fread($file, filesize($filename));
